@@ -1,0 +1,26 @@
+services:
+    catalog.api:
+        image: ${DOCKER_REGISTRY-}catalogapi
+        container_name: catalog.api
+        build:
+            context: .
+            dockerfile: eShopApp/Services/Catalog.API/Dockerfile
+        depends_on:
+            - sqlserver
+    
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server
+    
+        
+    webgateway:
+        image: ${DOCKER_REGISTRY-}webgateway
+        container_name: ocelot
+        build:
+            context: .
+            dockerfile: ApiGateways/webGateway/Dockerfile
+        depends_on:
+            - catalog.api
+    
+    basketdata:
+        image: redis:alpine
+           
