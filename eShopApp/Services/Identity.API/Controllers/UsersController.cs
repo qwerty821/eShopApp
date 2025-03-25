@@ -1,9 +1,11 @@
-﻿using Identity.API.Models.DTO;
+﻿using Identity.API.Contexts;
 using Identity.API.Models;
+using Identity.API.Models.DTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Identity.API.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Identity.API.Controllers
 {
@@ -12,12 +14,12 @@ namespace Identity.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IdentityDBContext _context;
-        // Constructor injecting the ApplicationDbContext
+
         public UsersController(IdentityDBContext context)
         {
             _context = context;
         }
-        // Registers a new user.
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
         {
@@ -26,7 +28,7 @@ namespace Identity.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            // Check if the email already exists.
+
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == registerDto.Email.ToLower());
             if (existingUser != null)
@@ -35,7 +37,7 @@ namespace Identity.API.Controllers
             }
             // Hash the password using BCrypt.
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
-            // Create a new user entity.
+
             var newUser = new User
             {
                 Firstname = registerDto.Firstname,
@@ -43,11 +45,11 @@ namespace Identity.API.Controllers
                 Email = registerDto.Email,
                 Password = hashedPassword
             };
-            // Add the new user to the database.
+
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
-            // Optionally, assign a default role to the new user.
-            // For example, assign the "User" role.
+            
+            
             var userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "User");
             if (userRole != null)
             {
@@ -61,19 +63,24 @@ namespace Identity.API.Controllers
             }
             return CreatedAtAction(nameof(GetProfile), new { id = newUser.Id }, new { message = "User registered successfully." });
         }
-        // Retrieves the authenticated user's profile.
+
         [HttpGet("GetProfile")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+
         public async Task<IActionResult> GetProfile()
         {
-            // Extract the user's email from the JWT token claims.
+            Console.WriteLine("datele din claim = ");
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+            }
+
             var emailClaim = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email);
             if (emailClaim == null)
             {
                 return Unauthorized(new { message = "Invalid token: Email claim missing." });
             }
             string userEmail = emailClaim.Value;
-            // Retrieve the user from the database, including roles.
             var user = await _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
@@ -82,7 +89,6 @@ namespace Identity.API.Controllers
             {
                 return NotFound(new { message = "User not found." });
             }
-            // Map the user entity to ProfileDTO.
             var profile = new ProfileDTO
             {
                 Id = user.Id,
@@ -93,7 +99,7 @@ namespace Identity.API.Controllers
             };
             return Ok(profile);
         }
-        // Updates the authenticated user's profile.
+
         [HttpPut("UpdateProfile")]
         [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO updateDto)
@@ -110,14 +116,12 @@ namespace Identity.API.Controllers
                 return Unauthorized(new { message = "Invalid token: Email claim missing." });
             }
             string userEmail = emailClaim.Value;
-            // Retrieve the user from the database.
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == userEmail.ToLower());
             if (user == null)
             {
                 return NotFound(new { message = "User not found." });
             }
-            // Update fields if provided.
             if (!string.IsNullOrEmpty(updateDto.Firstname))
             {
                 user.Firstname = updateDto.Firstname;
@@ -128,7 +132,6 @@ namespace Identity.API.Controllers
             }
             if (!string.IsNullOrEmpty(updateDto.Email))
             {
-                // Check if the new email is already taken by another user.
                 var emailExists = await _context.Users
                     .AnyAsync(u => u.Email.ToLower() == updateDto.Email.ToLower() && u.Id != user.Id);
                 if (emailExists)
@@ -143,7 +146,6 @@ namespace Identity.API.Controllers
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(updateDto.Password);
                 user.Password = hashedPassword;
             }
-            // Save the changes to the database.
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Profile updated successfully." });

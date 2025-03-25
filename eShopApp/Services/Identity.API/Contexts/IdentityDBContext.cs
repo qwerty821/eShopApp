@@ -9,7 +9,7 @@ namespace Identity.API.Contexts
     : base(options)
         {
         }
-        // Override OnModelCreating to configure entity properties and relationships.
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -50,15 +50,10 @@ namespace Identity.API.Contexts
             //        }
             //    );
         }
-        // DbSet representing the Users table.
         public DbSet<User> Users { get; set; }
-        // DbSet representing the Roles table.
         public DbSet<Role> Roles { get; set; }
-        // DbSet representing the Clients table.
         public DbSet<Client> Clients { get; set; }
-        // DbSet representing the UserRoles join table.
         public DbSet<UserRole> UserRoles { get; set; }
-        // DbSet representing the SigningKeys table.
         public DbSet<SigningKey> SigningKeys { get; set; }
     }
 }

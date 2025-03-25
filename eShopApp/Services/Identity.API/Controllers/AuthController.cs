@@ -28,6 +28,7 @@ namespace Identity.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -72,21 +73,19 @@ namespace Identity.API.Controllers
                 throw new Exception("No active signing key available.");
             }
             var privateKeyBytes = Convert.FromBase64String(signingKey.PrivateKey);
-            // Create a new RSA instance for cryptographic operations
+             
             var rsa = RSA.Create();
-            // Import the RSA private key into the RSA instance
+            
             rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
-            // Create a new RsaSecurityKey using the RSA instance
+           
             var rsaSecurityKey = new RsaSecurityKey(rsa)
             {
-                // Assign the Key ID to link the JWT with the correct public key
                 KeyId = signingKey.KeyId
             };
             var creds = new SigningCredentials(rsaSecurityKey, SecurityAlgorithms.RsaSha256);
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                // JWT ID (jti) claim with a unique identifier for the token
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.Firstname),
                 new Claim(ClaimTypes.NameIdentifier, user.Email),

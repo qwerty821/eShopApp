@@ -1,8 +1,16 @@
 <template>
-	<div>
-	  <h1>Welcome to the homepage</h1>
-	  <Catalog>
-		This is an auto-imported component.
-	  </Catalog>
-	</div>
+	<UApp>
+		<NuxtLayout>
+	  		<NuxtPage  />
+		</NuxtLayout>
+	</UApp>
   </template>
+  
+
+   <!-- <template>
+	<UBanner title="This is a banner with an important message." />
+  </template> -->
+
+<style scoped>
+
+</style>
