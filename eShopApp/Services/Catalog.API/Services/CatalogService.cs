@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Abstractions;
 using Catalog.API.Models;
+using Catalog.API.Models.DTOs;
 using System.IO;
 using System.Net.Sockets;
 
@@ -14,22 +15,29 @@ namespace Catalog.API.Services
             _catalogRepository = catalogRepository;
         }
 
-
-        public async Task<CatalogItem> Get(string id)
+        public async Task<string> Add(CatalogItemDto catalogItemDto)
         {
-            return await _catalogRepository.Get(id);
+            return await _catalogRepository.Add(catalogItemDto);
         }
 
-        public async Task<List<CatalogItem>> GetAll()
+        public async Task<int> Delete(string id)
         {
-            return await _catalogRepository.GetAll();
+            return await _catalogRepository.Delete(id);
         }
 
-        public void Add()
+        public async Task<CatalogItem> Get(string slug)
         {
-            _catalogRepository.Add();
+            return await _catalogRepository.Get(slug);
         }
 
-        
+        public async Task<PaginatedResultDto<ProductDTO>> GetProducts(int page, int pageSize)
+        {
+            return await _catalogRepository.GetProducts(page, pageSize);
+        }
+
+        public async Task<int> Update(string id, CatalogItem catalogItem)
+        {
+            return await _catalogRepository.Update(id, catalogItem);
+        }
     }
 }

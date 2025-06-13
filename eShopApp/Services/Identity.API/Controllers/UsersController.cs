@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Identity.API.Controllers
 {
@@ -23,7 +25,6 @@ namespace Identity.API.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
         {
-            // Validate the incoming model.
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -35,7 +36,7 @@ namespace Identity.API.Controllers
             {
                 return Conflict(new { message = "Email is already registered." });
             }
-            // Hash the password using BCrypt.
+
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
 
             var newUser = new User
@@ -100,6 +101,21 @@ namespace Identity.API.Controllers
             return Ok(profile);
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("token", new CookieOptions
+            {
+                HttpOnly = true,               
+                Secure = true,                
+                SameSite = SameSiteMode.None,  
+                Path = "/"                     
+            });
+
+            return Ok(new { message = "Logged out" });
+        }
+        
+        
         [HttpPut("UpdateProfile")]
         [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO updateDto)
@@ -150,5 +166,56 @@ namespace Identity.API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Profile updated successfully." });
         }
+
+        [HttpGet("/api/user/info")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity == null || !identity.IsAuthenticated)
+            {
+                return Unauthorized(new
+                {
+                    code = 401,
+                    type = "error",
+                    message = "Unauthorized",
+                });
+            }
+
+            var userId = identity.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int id))
+            {
+                return Unauthorized(new { code = 401, message = "Invalid token: UserId missing." });
+            }
+
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound(new { code = 404, message = "User not found." });
+            }
+
+            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+
+            return Ok(new
+            {
+                code = 0,
+                data = new
+                {
+                    id = user.Id,
+                    username = user.Email,
+                    realName = $"{user.Firstname} {user.Lastname}",
+                    roles = roles,
+                    homePath = "/workspace"
+                },
+                error = (string?)null,
+                message = "ok"
+            });
+        }
+
+
     }
 }

@@ -6,20 +6,31 @@ services:
             context: .
             dockerfile: eShopApp/Services/Catalog.API/Dockerfile
         depends_on:
-            - sqlserver
-    
-    sqlserver:
-        image: mcr.microsoft.com/mssql/server
-    
-        
-    webgateway:
-        image: ${DOCKER_REGISTRY-}webgateway
-        container_name: ocelot
+            - couchbase
+   
+    couchbase:
+        image: couchbase:community
+        container_name: couchbase
+    nginx:
+        image: nginx:latest
+        container_name: nginx-images
+        volumes:
+          - ./static-images:/usr/share/nginx/images:ro
+          - ./nginx.conf:/etc/nginx/nginx.conf:ro
+       
+    images.api:
         build:
             context: .
-            dockerfile: ApiGateways/webGateway/Dockerfile
-        depends_on:
-            - catalog.api
+            dockerfile: eShopApp/Services/Images.API/Dockerfile
+
+    # webgateway:
+    #     image: ${DOCKER_REGISTRY-}webgateway
+    #     container_name: ocelot
+    #     build:
+    #         context: .
+    #         dockerfile: ApiGateways/webGateway/Dockerfile
+    #     depends_on:
+    #         - catalog.api
     
     identity.api:
         image:  ${DOCKER_REGISTRY-}identityapi

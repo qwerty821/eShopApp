@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Catalog.API.Contexts;
 using Catalog.API.Models;
 using Catalog.API.Abstractions;
 using NuGet.Protocol.Core.Types;
+using Catalog.API.Models.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Catalog.API.Controllers
 {
@@ -16,83 +17,81 @@ namespace Catalog.API.Controllers
     [ApiController]
     public class CatalogItemsController : ControllerBase
     {
-        private readonly ICatalogItemRepository _repository;
         private readonly ILogger<CatalogItemsController> _logger;
-        public CatalogItemsController(ICatalogItemRepository repository, ILogger<CatalogItemsController> logger)
+        private readonly ICatalogService _catalogService;
+        public CatalogItemsController(ICatalogService catalogService, ILogger<CatalogItemsController> logger)
         {
-            _repository = repository;
+            _catalogService = catalogService;
             _logger = logger;
         }
 
         // GET: api/CatalogItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CatalogItem>>> GetProducts()
+        public async Task<ActionResult<PaginatedResultDto<ProductDTO>>> GetProducts(int page, int pageSize)
         {
-            _logger.LogInformation("Cerere GET primită pentru /api/CatalogItems");
-            _logger.LogInformation("Detalii cerere: {Method} {Path}, {ip1}, {ip2}", Request.Method, Request.Path, Request.HttpContext.Connection.RemoteIpAddress, Request.HttpContext.Connection.LocalIpAddress);
+            if (page <= 0 || pageSize <= 0)
+                return BadRequest("Page and pageSize must be greater than 0.");
 
-            return await _repository.GetAll();
+            try
+            {
+                return await _catalogService.GetProducts(page, pageSize);
+            } catch(Exception)
+            {
+                return BadRequest();
+            }
         }
 
-        // GET: api/CatalogItems/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CatalogItem>> GetCatalogItem(string id)
+        // GET: api/CatalogItems/{slug}
+        [HttpGet("{slug}")]
+        public async Task<IActionResult> GetCatalogItem(string slug)
         {
-            var catalogItem = await _repository.Get(id);
-
-            if (catalogItem == null)
-            {
+            var item = await _catalogService.Get(slug);
+            if (item == null)
                 return NotFound();
-            }
-
-            return catalogItem;
+            return Ok(item);
         }
 
         // PUT: api/CatalogItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCatalogItem(string id, CatalogItem catalogItem)
+        public async Task<IActionResult> PutCatalogItem(string id, [FromBody] CatalogItem catalogItem)
         {
             if (id != catalogItem.Id)
-            {
                 return BadRequest();
+             
+            int res = await _catalogService.Update(id, catalogItem);
+            if (res != 0)
+            {
+                return NoContent();
             }
-
-            //_repository.Update()
-
-            return NoContent();
+            return Ok();
         }
 
-         
+        // POST: api/CatalogItems
         [HttpPost]
-        public async Task<ActionResult<CatalogItem>> PostCatalogItem(CatalogItem catalogItem)
+        public async Task<IActionResult> PostCatalogItem([FromBody] CatalogItemDto catalogItemDto)
         {
-            
             try
             {
-                _repository.Add();
+                var id = await _catalogService.Add(catalogItemDto);
+                return Ok(id);
             }
             catch (DbUpdateException)
             {
                 return Conflict();
             }
-
-            return CreatedAtAction("GetCatalogItem", new { id = catalogItem.Id }, catalogItem);
         }
 
-        // DELETE: api/CatalogItems/5
-        [HttpDelete("{id}")]
+        // DELETE: api/CatalogItems/id/
+        [HttpDelete("id/{id}")]
         public async Task<IActionResult> DeleteCatalogItem(string id)
         {
-            try
-            {
-                //await _repository.Delete(id);
-            } catch (Exception ex)
-            {
-                return Conflict();
+            var res = await _catalogService.Delete(id);
+            if (res != 0) {
+                return NoContent();
             }
-            return NoContent();
+            return Ok();
         }
-        
+
     }
 }

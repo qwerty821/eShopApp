@@ -14,6 +14,10 @@ namespace Identity.API.Models
         [Required]
         public string Firstname { get; set; }
         public string? Lastname { get; set; }
+        
+        [Required]
+        public string Username { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Password { get; set; }

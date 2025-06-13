@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "eShopApp\Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API", "eShopApp\Services\Identity.API\Identity.API.csproj", "{95F209E5-02E0-4C85-AE7F-139BE9B76DEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Images.API", "eShopApp\Services\Images.API\Images.API.csproj", "{B5536DDF-4506-4C3B-B4F6-79D971B652E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{95F209E5-02E0-4C85-AE7F-139BE9B76DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95F209E5-02E0-4C85-AE7F-139BE9B76DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95F209E5-02E0-4C85-AE7F-139BE9B76DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5536DDF-4506-4C3B-B4F6-79D971B652E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5536DDF-4506-4C3B-B4F6-79D971B652E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5536DDF-4506-4C3B-B4F6-79D971B652E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5536DDF-4506-4C3B-B4F6-79D971B652E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{F10EF8E7-62E7-F5E4-AD20-EAF58DC1BBC2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D47F41B8-8722-49BE-BAF5-AC60098B58C8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{95F209E5-02E0-4C85-AE7F-139BE9B76DEF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B5536DDF-4506-4C3B-B4F6-79D971B652E0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F9510F9-D053-4D4F-A1F5-4E185A30662A}

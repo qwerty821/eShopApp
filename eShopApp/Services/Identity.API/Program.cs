@@ -36,10 +36,23 @@ namespace Identity.API
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOrigins",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader());
+                //options.AddPolicy("AllowAllOrigins",
+                //    builder => builder.AllowAnyOrigin()
+                //                      .AllowAnyMethod()
+                //                      .AllowAnyHeader());
+
+                options.AddPolicy("AllowSpecificOrigins", policy =>
+                {
+                    policy
+                        .WithOrigins(
+                            "http://localhost:3000",
+                            "https://localhost:3000",     
+                            "https://frontend.com"   
+                        )
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();  
+                });
             });
 
             var handler = new HttpClientHandler()
@@ -113,7 +126,17 @@ namespace Identity.API
 
             app.UseHttpsRedirection();
             ///
-            app.UseCors("AllowAllOrigins");
+            //app.UseCors("AllowAllOrigins");
+            app.UseCors("AllowSpecificOrigins");
+
+            app.Use(async (context, next) => {
+                var token = context.Request.Cookies["token"];
+                if (!string.IsNullOrEmpty(token))
+                    context.Request.Headers.Authorization = "Bearer " + token;
+
+                await next();
+            });
+
             /// 
             app.UseAuthentication();
             app.UseAuthorization();

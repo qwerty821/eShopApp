@@ -1,39 +1,33 @@
-services:
+﻿services:
     catalog.api:
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_HTTP_PORTS=8080
             - ASPNETCORE_HTTPS_PORTS=8081
         ports:
-            - "30080:8080"
-            - "30081:8081"
+            - "30100:8080"
+            - "30101:8081"
         volumes:
             - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
             - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
             - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
             - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-    sqlserver:
-        environment:
-            - MSSQL_SA_PASSWORD=Qwerty821@!1234
-            - ACCEPT_EULA=Y
-        ports:
-            - "1433:1433"
-        volumes:
-            - sql_data:/var/lib/mysql
-    webgateway:
-        environment:
-            - ASPNETCORE_ENVIRONMENT=Development
-            - ASPNETCORE_HTTP_PORTS=8080
-            - ASPNETCORE_HTTPS_PORTS=8081
-            - IdentityUrl=http://identity-api
-        ports:
-                - "38880:8080"
-                - "38881:8081"
-        volumes:
-            - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-            - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-            - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-            - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    
+    # webgateway:
+    #     environment:
+    #         - ASPNETCORE_ENVIRONMENT=Development
+    #         - ASPNETCORE_HTTP_PORTS=8080
+    #         - ASPNETCORE_HTTPS_PORTS=8081
+    #         - IdentityUrl=http://identity-api
+    #     ports:
+    #             - "30000:8080"
+    #             - "30001:8081"
+    #     volumes:
+    #         - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+    #         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    #         - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    #         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
     identitydb:
         environment:
             POSTGRES_PASSWORD: Qwerty821@!123456
@@ -49,8 +43,8 @@ services:
             - ASPNETCORE_HTTP_PORTS=8080
             - ASPNETCORE_HTTPS_PORTS=8081
         ports:
-            - "32080:8080"
-            - "32081:8081"
+            - "30110:8080"
+            - "30111:8081"
         volumes:
             - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
             - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -67,11 +61,77 @@ services:
         restart: always
         ports:
         - 8080:8080
+    couchbase:
+        ports:
+          - "8091-8096:8091-8096"   # UI si API
+          - "11210:11210"           # SDK (client access)
+        volumes:
+          - couchbase_data:/opt/couchbase/var
+        environment:
+          COUCHBASE_ADMIN_USERNAME: admin
+          COUCHBASE_ADMIN_PASSWORD: admin123
+        restart: unless-stopped
+        entrypoint: >
+           bash -c '
+            /entrypoint.sh couchbase-server &
+
+            sleep 15;
+
+            if curl -s http://127.0.0.1:8091/pools | grep -q "memoryQuota"; then
+              echo "Cluster already initialized, skipping setup.";
+            else
+              echo "Initializing cluster...";
+              couchbase-cli cluster-init -c 127.0.0.1 \
+                --cluster-username=admin \
+                --cluster-password=admin123 \
+                --services=data,index,query \
+                --cluster-ramsize=512 \
+                --cluster-index-ramsize=256;
+
+              couchbase-cli bucket-create -c 127.0.0.1 \
+                --username=admin \
+                --password=admin123 \
+                --bucket=Catalog \
+                --bucket-type=couchbase \
+                --bucket-ramsize=256 \
+                --wait;
+
+              couchbase-cli user-manage -c 127.0.0.1 \
+                --username=admin \
+                --password=admin123 \
+                --set --rbac-username=dev \
+                --rbac-password=dev123 \
+                --roles=admin \
+                --auth-domain=local;
+            fi
+
+            wait'
+          
+    nginx:
+        ports:
+          - "30080:80"
+        volumes:
+          - ./nginx_static_content:/usr/share/nginx/images:ro
+          - ./Configs/nginx.conf:/etc/nginx/nginx.conf:ro
+    images.api:
+        ports:
+            - "30081:8080"
+            - "30082:8081"
+        volumes:
+          - ./nginx_static_content:/app/images
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - IMAGES_PATH=/app/images
+            - IMAGES_BASE_URL=http://localhost:30080/img
+            # - IMAGES_BASE_URL=http://nginx:80/img
 volumes:
-    sql_data:
-        external: true
-    basketdata:
-        external: false
+    # sql_data:
+    
+    couchbase_data:
+
+        # external: true
+    # basketdata:
+    #     external: false
     identitydata:
         external: true
 
