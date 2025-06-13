@@ -1,3 +1,14 @@
+<script lang="ts" setup>
+
+definePageMeta({
+	middleware: [
+		'auth',
+	],
+});
+
+</script>
+
+
 <template>
 	<div>
 		<div class="parent">
@@ -57,9 +68,7 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
 
-</script>
 
 <style scoped>
 

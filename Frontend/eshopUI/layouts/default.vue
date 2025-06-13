@@ -1,40 +1,33 @@
 <template>
-	<div>
-		<header>
-			<PageHeaderMenu>
-				<slot name="header"></slot>
-			</PageHeaderMenu>
-		</header>
-		<main >
-			<UPage>
-				<template #left>
-					<UPageAside class="lg:col-span-1"/>
-				</template>
+  <div class="min-h-screen grid grid-rows-[auto_1fr_auto]">
+    <!-- Header -->
+    <div class=" ">
+      <NavBar />
+    </div>
 
-				<UPageBody>
-					<slot ></slot>
-				</UPageBody> 
+    <!-- Main Content -->
+    <div class="grid grid-cols-[minmax(10px,0)_minmax(0,12fr)_minmax(10px,0)] md:grid-cols-[1fr_12fr_1fr]">
+      <div class=" text-xs text-center"> </div>
+      <div class="main-content">
+        <slot></slot>
+      </div>
+      <div class=" text-xs text-center"> </div>
+    </div>
 
-				<template #right>
-					<UPageAside class="lg:col-span-1" />
-				</template>
-
-			</UPage>
-		</main>
-		
-		<footer>
-			<PageFooter>
-				<slot name="footer"></slot>
-			</PageFooter>
-		</footer>
-		 
-	</div>
+    <!-- Footer -->
+    <div class=" text-center">
+    	 <USeparator />
+		footer
+    </div>
+  </div>
 </template>
 
-<script lang="ts" setup>
-
+<script setup lang="ts">
+import NavBar from '~/components/NavBar.vue'
 </script>
 
 <style scoped>
-	 
+.main-content{
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
 </style>

@@ -14,11 +14,11 @@ export default defineAppConfig({
 		page: {
 			compoundVariants: [
 				{
-				  left: true,
-				  right: true,
-				  class: {
-					center: 'lg:col-span-8'
-				  }
+					left: true,
+					right: true,
+					class: {
+						center: 'lg:col-span-8'
+					}
 				} 
 			  ]
 		}

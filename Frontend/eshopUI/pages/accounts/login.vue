@@ -1,111 +1,116 @@
+<template>
+  <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700" style="margin: 100px auto;">
+    <div class="flex flex-col items-center justify-center">
+      <img src="" alt="aaaaa"/>
+      <p class="text-2xl">Log In</p>
+    </div>
+    <a-form
+      ref="formRef"
+      :model="formState"
+      name="normal_login"
+      class="login-form"
+      @finish="onFinish"
+      @finishFailed="onFinishFailed"
+    >
+      <a-form-item
+        label="Username"
+        name="username"
+        :rules="[
+          { required: true, message: 'Please input your username!' },
+          { min: 4, message: 'Username must be at least 4 characters!' }
+        ]"
+      >
+        <a-input v-model:value="formState.username">
+          <template #prefix>
+            <UserOutlined class="site-form-item-icon" />
+          </template>
+        </a-input>
+      </a-form-item>
+
+      <a-form-item
+        label="Password"
+        name="password"
+        :rules="[
+          { required: true, message: 'Please input your password!' },
+          { min: 6, message: 'Password must be at least 6 characters!' }
+        ]"
+      >
+        <a-input-password v-model:value="formState.password">
+          <template #prefix>
+            <LockOutlined class="site-form-item-icon" />
+          </template>
+        </a-input-password>
+      </a-form-item>
+
+      <a-form-item>
+        <a-form-item name="remember" no-style>
+          <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+        </a-form-item>
+        <a class="login-form-forgot" href="">Forgot password</a>
+      </a-form-item>
+
+      <a-form-item>
+        <a-button :disabled="disabled" type="primary" html-type="submit" class="login-form-button">
+          Log in
+        </a-button>
+        Or
+        <a href="">register now!</a>
+      </a-form-item>
+    </a-form>
+  </div>
+</template>
+
 <script setup lang="ts">
+import { ref, computed } from 'vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 
-
-
-definePageMeta({
-  layout: false,
+interface FormState {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+const formState = ref<FormState>({
+  username: '',
+  password: '',
+  remember: true,
 });
 
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
-import {ref} from 'vue';
-import { tr } from '@nuxt/ui-pro/runtime/locale/index.js';
+const formRef = ref();
 
-import {useAuthStore } from '@/stores/auth.store';
-import { error } from '#build/ui-pro';
-const toast = useToast()
+const router = useRouter()
 
-const fields = [{
-	name: 'email', 
-	type: 'text' as const,
-	label: 'Email',
-	placeholder: 'Enter your email',
-	required: true,
-	// value: "email@mail.com"
-}, {
-	name: 'password',
-	label: 'Password',
-	type: 'password' as const,
-	placeholder: 'Enter your password',
-	// value: "Password123@"
-}, {
-	name: 'remember',
-	label: 'Remember me',
-	type: 'checkbox' as const
-}]
-
-const providers = [{
-	label: 'Google',
-	icon: 'i-simple-icons-google',
-	onClick: () => {
-		toast.add({ title: 'Google', description: 'Login with Google' })
-	}
-}, {
-	label: 'GitHub',
-	icon: 'i-simple-icons-github',
-	onClick: () => {
-		toast.add({ title: 'GitHub', description: 'Login with GitHub' })
-	}
-}]
-
-const schema = z.object({
-	email: z.string().email('Invalid email'),
-	password: z.string().min(6, 'Must be at least 8 characters')
-})
-
-type Schema = z.output<typeof schema>
-
-const authError = ref({
-	value: false,
-	err: ''
-});
-const alertStore = useAlertStore();
-const { alert } = storeToRefs(alertStore);
-const authStore = useAuthStore();
-
-async function onSubmit(user: FormSubmitEvent<Schema>) {
-	alertStore.clear();
+const onFinish = async (values: any) => {
+	const user = useUserStore();
+	const res = await user.login(values as IUserLoginDTO);
 	
-	const credentials = { email: user.data.email, password: user.data.password };
-
-	try {
-		const status = await authStore.login(credentials);
-		if(status == 200) {
-			navigateTo('/');
-		}
-	} catch(err) {
-		
+	if (res.success) {
+		router.push("/");
+	} else {
+		alert(res.message);
 	}
-}
-
-async function validateToken() {
-	await authStore.validateToken();
-}
  
+};
 
+const onFinishFailed = (errorInfo: any) => {
+  console.log('Failed:', errorInfo);
+};
+
+const disabled = computed(() => {
+  return !(formState.value.username && formState.value.password);
+});
 </script>
 
-<template>
-	<div class="flex flex-col items-center justify-center gap-4 p-4">
-		<UPageCard class="w-full max-w-md">
-			<UAuthForm :schema="schema" :fields="fields" :providers="providers" title="Welcome back!" 
-				icon="i-lucide-lock" @submit.prevent="onSubmit">
-				<template #description>
-					Don't have an account? <ULink to="/accounts/register" class="text-(--ui-primary) font-medium">Sign up</ULink>.
-				</template>
-					
-				<template #password-hint>
-					<NuxtLink to="/" class="text-(--ui-primary) font-medium">Forgot password?</NuxtLink>
-				</template>
-				<template #validation>
-					<UAlert v-if="alert" color="error" icon="i-lucide-info" :title="alert.message" />
-				</template>
-				<template #footer>
-					By signing in, you agree to our <ULink to="#" class="text-(--ui-primary) font-medium">Terms of
-						Service</ULink>.
-				</template>
-			</UAuthForm>
-		</UPageCard>
-		<UButton @click="validateToken">AAAAA</UButton>
-	</div>
-</template>
+
+<style scoped>
+#components-form-demo-normal-login .login-form {
+	max-width: 300px;
+}
+
+#components-form-demo-normal-login .login-form-forgot {
+	float: right;
+}
+
+#components-form-demo-normal-login .login-form-button {
+	width: 100%;
+}
+</style>

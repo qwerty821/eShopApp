@@ -63,12 +63,19 @@
                 <a href="#" class="text-sm/6 font-semibold text-gray-900">Marketplace</a>
                 <a href="#" class="text-sm/6 font-semibold text-gray-900">Company</a>
             </PopoverGroup>
-            <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a href="/accounts/profile" class="text-sm/6 font-semibold text-gray-900">Profile<span
+            <div v-if="!isAuthenticated" class="hidden lg:flex lg:flex-1 lg:justify-end">
+                <a href="/accounts/register" class="text-sm/6 font-semibold text-gray-900">Register<span
                     aria-hidden="true"> | </span></a>
                 <a href="/accounts/login" class="text-sm/6 font-semibold text-gray-900">Log in <span
                     aria-hidden="true">&rarr; </span></a>
             </div>
+            <div v-else="" class="hidden lg:flex lg:flex-1 lg:justify-end">
+                <a href="/accounts/profile" class="text-sm/6 font-semibold text-gray-900">User 1<span
+                    aria-hidden="true"> | </span></a>
+                <a href="#" @click="logoutEvent" class="text-sm/6 font-semibold text-gray-900"> Log out <span
+                    aria-hidden="true">&rarr; </span></a>
+            </div>
+            <UColorModeSwitch  @click="switchmode" style="margin-left: 20px;"/>
              
         </nav>
         <Dialog class="lg:hidden" @close="mobileMenuOpen = false" :open="mobileMenuOpen">
@@ -157,4 +164,41 @@ const callsToAction = [
 ]
 
 const mobileMenuOpen = ref(false)
+
+// const authStore = useAuthStore();
+const userStore = useUserStore();
+// const isAuthenticated = computed(() => {
+//     console.log("autentificare in menu " + authStore.isAuthenticated);
+//     return authStore.isAuthenticated;
+// });
+
+const { isAuthenticated } = storeToRefs(userStore);
+
+watch(isAuthenticated, (newVal) => {
+    console.log("Valoarea isAuthenticated s-a schimbat:", newVal);
+});
+
+function logoutEvent() {
+    authStore.logout();
+    navigateTo("/");
+    
+}
+const config = useRuntimeConfig()
+const nightMode = ref(config.app.nightMode)
+
+function switchmode() {
+    console.log(nightMode.value)
+    nightMode.value != nightMode;
+    console.log("new = " + nightMode.value);
+}
 </script>
+
+
+<style scoped>
+.night {
+    background-color: #0f172b;
+    border-bottom:3px #3d4f4f solid;
+}
+
+
+</style>

@@ -1,8 +1,10 @@
-import { useAuthStore } from "@/stores/auth.store";
+import { defineNuxtRouteMiddleware, navigateTo } from '#app'
+import { useRequestHeaders } from 'nuxt/app'
 
-export default defineNuxtRouteMiddleware((to, from) => {
-    const authStore = useAuthStore();
-    if (authStore.isAuthenticated === false) {
-        return navigateTo('/login')
+export default defineNuxtRouteMiddleware(async (to) => {
+    if (to.path === '/accounts/login') return
+    const user = useUserStore();
+    if (!user.isAuthenticated && import.meta.client) {
+        return navigateTo('/accounts/login')
     }
 })

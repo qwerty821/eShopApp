@@ -15,65 +15,98 @@ const statusCodes: Record<number, string> = {
 
 
 export const useAuthStore = defineStore('auth-store', () => {
- 
-	let token: string | null = null;
-	if (import.meta.client) {
-		token = localStorage.getItem('token');
-		console.info("token init with " + token);
-	}
+
+	// let token: string | null = null;
+	const token = ref<string | null>(null);
+
 	const config = useRuntimeConfig();
 	const JWKS_URL = `${config.public.jwksUrl}`;
 
 	const alertStore = useAlertStore();
 	const jwks = createRemoteJWKSet(new URL(JWKS_URL));
-	
-	const isAuthenticated = computed(() => !!token);
+
+	const isAuthenticated = ref(false);
+
+	const cookieToken = useCookie('token');
+
+	onMounted(() => {
+		initToken();
+	});
+
+	watch(token, async (newToken) => {
+		await checkAuthentication();
+	});
+
+	async function initToken() {
+		if (!token.value && cookieToken.value) {
+			token.value = cookieToken.value;
+			// console.info("token init with " + token.value);
+		}
+		await checkAuthentication();
+	}
+	async function checkAuthentication() {
+		isAuthenticated.value = await validateToken();
+	}
 
 	async function login(user: IUser): Promise<number | void> {
-		try {
-			const data = await $fetch<{ token: string }>(`${config.public.apiBaseUrl}/auth/login`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(user),
-			});
+		if (import.meta.client) {
+			try {
+				const data = await $fetch<{ token: string }>(`${config.public.userLoginUrl}`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(user),
+				});
 
-			token = data.token;
-			localStorage.setItem('token', data.token);
+				token.value = data.token;
+				cookieToken.value = token.value;
 
-			return 200;
+				await checkAuthentication();
 
-		} catch (error: any) {
-			alertStore.error(statusCodes[error.status] || 'Eroare necunoscuta');
+				return 200;
+
+			} catch (error: any) {
+				alertStore.error(statusCodes[error.status] || 'Eroare necunoscuta');
+			}
 		}
 	}
 
 	async function validateToken(): Promise<boolean> {
+		if (!token.value || typeof token.value !== "string") {
+			// console.log("token null la verificare");			
+			return false;
+		}
+
 		try {
-			console.log("init " + token);
-			if (!token) {
-				console.log("token null");
-				return false; 
-			}
-			const { payload } = await jwtVerify(token, jwks);
-			console.log(payload);
-			
+
+			const { payload } = await jwtVerify(token.value, jwks);
+			// console.log(payload);
+
 			const now = Math.floor(Date.now() / 1000);
 			if (payload.exp && payload.exp < now) {
 				return false; // Token expirat
 			}
-			return true;  
+			return true;
 		} catch (error) {
 			console.error("eroare : " + error);
-			return false;  
+			return false;
 		}
 	}
 
+
+
+	function logout(): boolean {
+		token.value = null;
+		cookieToken.value = null;
+		isAuthenticated.value = false;
+		return true;
+	}
 	return {
 		token,
 		isAuthenticated,
 		login,
+		logout,
 		validateToken
 	};
 });

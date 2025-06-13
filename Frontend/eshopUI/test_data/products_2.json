@@ -1,0 +1,81 @@
+
+[
+  {
+    "Name": "Lenovo ThinkPad X1",
+    "Price": 11352.87,
+    "Description": "Laptop Lenovo ThinkPad X1 Carbon Gen 12 cu procesor Intel® Core™ Ultra 7 155U pana la 4.8GHz, 14, 2.8K, OLED, Touch, 32GB LPDDR5x, 1TB SSD, Intel® Graphics, Windows 11 Pro, Black",
+    "Image": "http://localhost:30080/img/res_3cbf63b065177ec45de103eed1cde998.jpg",
+    "AvailableStock": 5,
+    "CategoryId": 1,
+    "Slug": "lenovo-thinkpad-x1",
+    "Images": [
+      "http://localhost:30080/img/res_288f9a312b8b59630ed1a3246c02e3a6.jpg",
+      "http://localhost:30080/img/res_c1e8bbcfc6439a3c3d88b48f72bfd201.jpg",
+      "http://localhost:30080/img/res_0b57975f07503bc13a2c69454cf52ab8.jpg"
+    ],
+    "Attributes": {
+      "Procesor": "Intel Core i9",
+      "RAM": "16GB",
+      "Stocare": "1TB SSD",
+      "Ecran": "15.6” UHD+"
+    }
+  },
+  {
+    "Name": "HP Spectre x360",
+    "Price": 5107.29,
+    "Description": "HP Spectre x360 - Laptop 2-in-1 HP",
+    "Image": "http://localhost:30080/img/res_5d5cd5930a4176c4dfdfdead5b8f01c0.jpg",
+    "AvailableStock": 23,
+    "CategoryId": 1,
+    "Slug": "hp-spectre-x360",
+    "Images": [
+      "http://localhost:30080/img/res_a2dd0e84198bf60111de7e93818cbe38.jpg",
+      "http://localhost:30080/img/res_e3d5c87f09bdc00e8c99b8e3d70da4d6.jpg",
+      "http://localhost:30080/img/res_f25e53e9af394f6aea628fa7ea7a56d5.jpg"
+    ],
+    "Attributes": {
+      "Procesor": "Intel Core i5",
+      "RAM": "8GB",
+      "Stocare": "256GB SSD",
+      "Ecran": "13.3” Retina"
+    }
+  },
+  {
+    "Name": "Google Pixel 9 Pro",
+    "Price": 7953.76,
+    "Description": "Smartphone Google Pixel 9 Pro 6,7\" 128 GB 12 GB RAM Albastru Celeste ",
+    "Image": "http://localhost:30080/img/res_4fcc16a2f1be48d5fcc84cf07abeeb30.jpg",
+    "AvailableStock": 6,
+    "CategoryId": 2,
+    "Slug": "google-pixel-9-pro",
+    "Images": [
+      "http://localhost:30080/img/res_7334bfe69d5ff876e5a7d0bab7909dbd.jpg"
+    ],
+    "Attributes": {
+      "Display": "6.7” Super Retina",
+      "Camera": "108MP",
+      "Stocare": "256GB",
+      "Baterie": "5000mAh"
+    }
+  },
+  {
+    "Name": "Sennheiser Momentum 4",
+    "Price": 1462.78,
+    "Description": "Casti audio Over the ear Sennheiser Momentum 4, Wireless, ANC, Negru ",
+    "Image": "http://localhost:30080/img/res_de61881254d77936c7ebd9f3b5e28bd2.jpg",
+    "AvailableStock": 14,
+    "CategoryId": 3,
+    "Slug": "sennheiser-momentum-4",
+    "Images": [
+      "http://localhost:30080/img/res_3d6e7d708dea7eaa57cb31153c364cd2.jpg",
+      "http://localhost:30080/img/res_bb688d61e9310e406adf5a3cffadd471.jpg"
+    ],
+    "Attributes": {
+      "Tip": "Over-ear",
+      "Conectivitate": "Bluetooth",
+      "Autonomie": "30h",
+      "Noise Cancelling": "Da"
+    }
+  } 
+]
+ 

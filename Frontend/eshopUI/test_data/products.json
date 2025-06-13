@@ -1,0 +1,121 @@
+[
+  {
+    "Name": "Apple MacBook Air M2",
+    "Price": 4299.99,
+    "Description": "Laptop ultra-subțire cu cip M2, 13.6” Retina, 8GB RAM, 256GB SSD.",
+    "Image": "http://localhost:30080/img/res_00444a9d60d7df6aeb4b52ee0107638c.jpg",
+    "AvailableStock": 15,
+    "CategoryId": 1,
+    "Slug": "apple-macbook-air-m2",
+    "Images": [
+      "http://localhost:30080/img/res_094462e85a3ba7fb488196bd3f50782b.jpg",
+      "http://localhost:30080/img/res_01b833fa59d0340a65d935d84adeec38.jpg",
+      "http://localhost:30080/img/res_8d300d76f8ad9efdf18e043af7091a27.jpg"
+    ],
+    "Attributes": {
+      "Procesor": "Apple M2",
+      "RAM": "8GB",
+      "Stocare": "256GB SSD",
+      "Ecran": "13.6” Retina"
+    }
+  },
+  {
+    "Name": "Samsung Galaxy S23",
+    "Price": 3999.99,
+    "Description": "Smartphone cu ecran Dynamic AMOLED 2X, 256GB stocare.",
+    "Image": "http://localhost:30080/img/res_ffcb7b5770c2897ca7e87093c5253e15.jpg",
+    "AvailableStock": 20,
+    "CategoryId": 2,
+    "Slug": "samsung-galaxy-s23",
+    "Images": [
+      "http://localhost:30080/img/res_a54ef0b7af00459e57e280696ca035c8.jpg",
+      "http://localhost:30080/img/res_45b1d38f44c8ee6aa04cb72302f0e983.jpg",
+      "http://localhost:30080/img/res_2134f333e36fe9798491373b31a4d878.jpg",
+      "http://localhost:30080/img/res_72ab08a0f682d83fb8a45c185055d7d5.jpg"
+    ],
+    "Attributes": {
+      "Display": "6.1” AMOLED",
+      "Stocare": "256GB",
+      "Camera": "50MP",
+      "Baterie": "3900mAh"
+    }
+  },
+  {
+    "Name": "Sony WH-1000XM5",
+    "Price": 2500.00,
+    "Description": "Căști wireless cu noise cancelling și sunet premium.",
+    "Image": "http://localhost:30080/img/res_1d9585e80d04423f0a68fcb3cbeb31ec.jpg",
+    "AvailableStock": 30,
+    "CategoryId": 3,
+    "Slug": "sony-wh-1000xm5",
+    "Images": [
+      "http://localhost:30080/img/res_8b68a6e55ddaa4e5d780ad24ae14ed99.jpg",
+      "http://localhost:30080/img/res_244acec6df679c1433b75e1c3a617935.jpg",
+      "http://localhost:30080/img/res_df32f3233624737a3b7ea5649b4f17f3.jpg"
+
+    ],
+    "Attributes": {
+      "Tip": "Over-ear",
+      "Conectivitate": "Bluetooth",
+      "Autonomie": "30h",
+      "Noise Cancelling": "Da"
+    }
+  },
+  {
+    "Name": "Logitech MX Master 3S",
+    "Price": 99.99,
+    "Description": "Mouse ergonomic wireless pentru productivitate ridicată.",
+    "Image": "http://localhost:30080/img/res_2fadf478097b1b49f29e696eba1f45f5.jpg",
+    "AvailableStock": 50,
+    "CategoryId": 4,
+    "Slug": "logitech-mx-master-3s",
+    "Images": [
+      "http://localhost:30080/img/res_8aff1070b109eb68a093dfaae358e931.jpg",
+      "http://localhost:30080/img/res_6e9c53c7d27f43ea9279c013af830800.jpg"
+    ],
+    "Attributes": {
+      "Tip": "Mouse wireless",
+      "Butoane": "7",
+      "Conectivitate": "Bluetooth/USB",
+      "Senzor": "8000 DPI"
+    }
+  },
+  {
+    "Name": "Dell XPS 15",
+    "Price": 7999.99,
+    "Description": "Laptop cu ecran 15.6” UHD+, i7, 16GB RAM, 512GB SSD.",
+    "Image": "http://localhost:30080/img/res_88e8e68b18f0e6d287cd40f859954c1a.jpg",
+    "AvailableStock": 10,
+    "CategoryId": 1,
+    "Slug": "dell-xps-15",
+    "Images": [
+      "http://localhost:30080/img/res_d21197eded52575e1708717464991a76.jpg",
+      "http://localhost:30080/img/res_439dcfc7a07946f31598b071f442dfaf.jpg"
+    ],
+    "Attributes": {
+      "Procesor": "Intel Core i7",
+      "RAM": "16GB",
+      "Stocare": "512GB SSD",
+      "Ecran": "15.6” UHD+"
+    }
+  },
+  {
+    "Name": "Apple iPhone 14 Pro",
+    "Price": 1199.00,
+    "Description": "Smartphone de top cu ecran ProMotion și cameră de 48MP.",
+    "Image": "http://localhost:30080/img/res_749904e2b5777dea6eb322cfb68742a1.jpg",
+    "AvailableStock": 12,
+    "CategoryId": 2,
+    "Slug": "apple-iphone-14-pro",
+    "Images": [
+      "http://localhost:30080/img/res_6cad71febc2fc23baa160ece8c2ba4d9.jpg",
+      "http://localhost:30080/img/res_7f7a2b3c27901ed23bb184e5a0c69b0d.jpg"
+    ],
+    "Attributes": {
+      "Display": "6.1” OLED",
+      "Camera": "48MP",
+      "Stocare": "256GB",
+      "Chip": "A16 Bionic"
+    }
+  } 
+]
