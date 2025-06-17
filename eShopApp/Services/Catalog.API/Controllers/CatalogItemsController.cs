@@ -51,6 +51,15 @@ namespace Catalog.API.Controllers
             return Ok(item);
         }
 
+        [HttpGet("id/{id}")]
+        public async Task<IActionResult> GetCatalogItemById(string id)
+        {
+            var item = await _catalogService.GetById(id);
+            if (item == null)
+                return NotFound();
+            return Ok(item);
+        }
+
         // PUT: api/CatalogItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -10,5 +10,6 @@ namespace Catalog.API.Abstractions
         Task<string> Add(CatalogItemDto catalogItemDto);
         Task<int> Delete(string id);
         Task<int> Update(string id, CatalogItem catalogItem);
+        Task<CatalogItem> GetById(string id);
     }
 }

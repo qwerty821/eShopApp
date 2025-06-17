@@ -21,6 +21,8 @@ namespace Identity.API.Models
         [Required]
         [StringLength(100)]
         public string Password { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; } // Navigation property for many-to-many relationship with Role
+        public ICollection<UserRole> UserRoles { get; set; } 
+
+        public int ShippingAddressId { get; set; }
     }
 }

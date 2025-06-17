@@ -29,6 +29,11 @@ namespace Catalog.API.Services
         {
             return await _catalogRepository.Get(slug);
         }
+        public async Task<CatalogItem> GetById(string id)
+        {
+            return await _catalogRepository.GetById(id);
+        }
+
 
         public async Task<PaginatedResultDto<ProductDTO>> GetProducts(int page, int pageSize)
         {

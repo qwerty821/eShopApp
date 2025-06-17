@@ -28,7 +28,20 @@ namespace Catalog.API.Repositories
             var cluster = await _clusterTask;
 
             var query = @"
-                SELECT c.* FROM Catalog c 
+                SELECT RAW { 
+                    'Id': META(c).id,
+                    'Name': c.Name,
+                    'Price': c.Price,
+                    'Description': c.Description,
+                    'Image': c.Image,
+                    'AvailableStock': c.AvailableStock,
+                    'CategoryId': c.CategoryId,
+                    'Brand': c.Brand,
+                    'Slug': c.Slug,
+                    'Images': c.Images,
+                    'Attributes': c.Attributes
+                }
+                FROM Catalog c 
                 WHERE c.Slug = $slug
                 LIMIT 1;
             ";
@@ -41,7 +54,37 @@ namespace Catalog.API.Repositories
             var item = await result.Rows.FirstOrDefaultAsync();
             return item;
         }
+        public async Task<CatalogItem> GetById(string id)
+        {
+            var cluster = await _clusterTask;
 
+            var query = @"
+                SELECT RAW { 
+                    'Id': META(c).id,
+                    'Name': c.Name,
+                    'Price': c.Price,
+                    'Description': c.Description,
+                    'Image': c.Image,
+                    'AvailableStock': c.AvailableStock,
+                    'CategoryId': c.CategoryId,
+                    'Brand': c.Brand,
+                    'Slug': c.Slug,
+                    'Images': c.Images,
+                    'Attributes': c.Attributes
+                }
+                FROM Catalog c 
+                WHERE META(c).id = $id
+                LIMIT 1;
+            ";
+
+            var result = await cluster.QueryAsync<CatalogItem>(query, options =>
+            {
+                options.Parameter("id", id);
+            });
+
+            var item = await result.Rows.FirstOrDefaultAsync();
+            return item;
+        }
         public async Task<string> Add(CatalogItemDto catalogItemDto)
         {
             CatalogItem catalogItem = new CatalogItem(catalogItemDto)
